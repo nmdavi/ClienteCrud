@@ -1,0 +1,29 @@
+--DROP DATABASE ClienteBD
+--DROP TABLE Cliente
+--DROP TABLE Telefone
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ClienteBD')
+BEGIN
+    CREATE DATABASE ClienteBD
+END
+GO
+USE ClienteBD
+GO
+IF (SELECT COUNT(*) FROM SYSOBJECTS WHERE xtype = 'U' AND name = 'Cliente') = 0
+BEGIN	
+	CREATE TABLE Cliente (
+		Id INT PRIMARY KEY IDENTITY(1,1),
+		Nome VARCHAR(100) NOT NULL,
+		Sexo VARCHAR(20),
+		Endereco VARCHAR(200)
+	)
+END
+GO
+IF (SELECT COUNT(*) FROM SYSOBJECTS WHERE xtype = 'U' AND name = 'Telefone') = 0
+BEGIN	
+	CREATE TABLE Telefone (
+		Id INT PRIMARY KEY IDENTITY(1,1),
+		ClienteId INT NOT NULL FOREIGN KEY REFERENCES Cliente(Id),
+		Numero VARCHAR(20),
+		Ativo BIT
+	)
+END

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ClienteCrud.Dominio.Modelo.Cliente>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Clientes</h2>
+<p>
+    @Html.ActionLink("Novo Cliente", "Novo")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Sexo</th>
+            <th>Endereço</th>
+            <th>Telefones</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.Sexo</td>
+                <td>@item.Endereco</td>
+                <td>
+                    @if (item.Telefones != null && item.Telefones.Any())
+                    {
+                        <ul>
+                            @foreach (var tel in item.Telefones)
+                            {
+                                <li>@tel.Numero @(tel.Ativo ? "(ativo)" : "")</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>Nenhum</span>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Atualizar", "Atualizar", new { id = item.Id }) |
+                    @Html.ActionLink("Detalhes", "Detalhes", new { id = item.Id }) |
+                    @Html.ActionLink("Apagar", "Apagar", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

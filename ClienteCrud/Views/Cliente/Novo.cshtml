@@ -1,0 +1,104 @@
+﻿@model ClienteCrud.Dominio.Modelo.Cliente
+
+@{
+    ViewBag.Title = "Novo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.Id)
+
+    <div>
+        @Html.LabelFor(m => m.Nome)
+        @Html.TextBoxFor(m => m.Nome)
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.Sexo)
+        @Html.DropDownListFor(m => m.Sexo, new SelectList(new[] {
+            new { Value = "Masculino", Text = "Masculino" },
+            new { Value = "Feminino", Text = "Feminino" },
+            new { Value = "Outro", Text = "Outro" }
+        }, "Value", "Text"))
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.Endereco)
+        @Html.TextBoxFor(m => m.Endereco)
+    </div>
+
+    <h4>Telefones</h4>
+    <table id="telefonesTable">
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Ativo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Telefones.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.TextBoxFor(m => m.Telefones[i].Numero)
+                        @Html.HiddenFor(m => m.Telefones[i].Id)
+                    </td>
+                    <td>
+                        @Html.RadioButtonFor(m => m.Telefones[i].Ativo, true, new { name = "TelefoneAtivo" })
+                    </td>
+                    <td>
+                        <button type="button" onclick="removerTelefone(this)">Remover</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="button" onclick="adicionarTelefone()">Adicionar Telefone</button>
+
+    <br />
+    <br />
+    <input type="submit" value="Salvar" />
+}
+
+@section Scripts {
+    <script>
+        function adicionarTelefone() {
+            var index = $("#telefonesTable tbody tr").length;
+            var row = `
+                <tr>
+                    <td>
+                        <input type="text" name="Telefones[${index}].Numero" />
+                        <input type="hidden" name="Telefones[${index}].Id" value="" />
+                    </td>
+                    <td>
+                        <input type="radio" name="TelefoneAtivo" onchange="marcarAtivo(${index})" />
+                        <input type="hidden" name="Telefones[${index}].Ativo" value="false" />
+                    </td>
+                    <td>
+                        <button type="button" onclick="removerTelefone(this)">Remover</button>
+                    </td>
+                </tr>`;
+            $("#telefonesTable tbody").append(row);
+        }
+
+        function removerTelefone(btn) {
+            $(btn).closest("tr").remove();
+        }
+
+        function marcarAtivo(index) {
+            $('input[name^="Telefones"]').each(function () {
+                if (this.name.includes("Ativo")) {
+                    this.value = "false";
+                }
+            });
+            $(`input[name="Telefones[${index}].Ativo"]`).val("true");
+        }
+    </script>
+}
